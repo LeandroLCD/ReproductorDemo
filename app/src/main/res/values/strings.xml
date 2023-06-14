@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ReproductorDemo</string>
+    <string name="uri_respaldo">https://dattavolt.com/8164/stream</string>
+    <string name="uri_principal">https://dattavolt.com/8164/stream</string>
+</resources>
