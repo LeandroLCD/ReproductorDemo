@@ -38,8 +38,16 @@ import androidx.media3.ui.PlayerView
 import com.leandrolcd.reproductordemo.ui.theme.ReproductorDemoTheme
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var reproExoPlayer: ExoPlayer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //para xml
+        if(setupExoPlayer(getString(R.string.uri_principal))){
+            //pintas el reproductor
+            }else{
+            //error en pantalla
+        }
         setContent {
             ReproductorDemoTheme {
                 // A surface container using the 'background' color from the theme
@@ -47,10 +55,60 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    //para compose
                    VideoPlayer(uri = getString(R.string.uri_principal))
                 }
             }
         }
+    }
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    private fun  setupExoPlayer(uri: String):Boolean {
+        var resp = true
+        val context = this
+        reproExoPlayer = ExoPlayer.Builder(context)
+            .build()
+            .apply {
+                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                    context,
+                    defaultDataSourceFactory
+                )
+
+                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri))
+
+                setMediaSource(source)
+                prepare()
+            }
+        reproExoPlayer.playWhenReady = true
+
+        reproExoPlayer.addListener(object : Player.Listener {
+            @SuppressLint("SuspiciousIndentation")
+            override fun onPlayerError(error: PlaybackException) {
+                val currentUri = reproExoPlayer.currentMediaItem?.playbackProperties?.uri.toString()
+                if (currentUri == context.getString(R.string.uri_principal)){
+                    reproExoPlayer.apply {
+                        val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+                        val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                            context,
+                            defaultDataSourceFactory
+                        )
+
+                        val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                            .createMediaSource(MediaItem.fromUri(context.getString(R.string.uri_respaldo)))
+
+                        setMediaSource(source)
+                        prepare()
+                    }
+                }else{
+                    Log.d("Analisis", "onPlayerError: false")
+                    Toast.makeText(context, "Actualmente presentamos fallas tecnicas", Toast.LENGTH_LONG).show()
+                    resp = false
+                }
+
+            }
+        })
+        return resp
     }
 }
 
@@ -77,6 +135,8 @@ fun VideoPlayer(uri: String) {
                 setMediaSource(source)
                 prepare()
             }
+
+
     }
 
     exoPlayer.playWhenReady = true
