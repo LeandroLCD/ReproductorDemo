@@ -35,6 +35,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.leandrolcd.reproductordemo.ui.menu.MenuScreen
 import com.leandrolcd.reproductordemo.ui.theme.ReproductorDemoTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,7 +57,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //para compose
-                   VideoPlayer(uri = getString(R.string.uri_principal))
+                    MenuScreen()
+                   //VideoPlayer(uri = getString(R.string.uri_principal))
                 }
             }
         }
@@ -172,7 +174,7 @@ fun VideoPlayer(uri: String) {
     DisposableEffect(
         AndroidView(factory = {
             PlayerView(context).apply {
-                hideController()
+                 hideController()
                 useController = false
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
 
@@ -184,17 +186,17 @@ fun VideoPlayer(uri: String) {
         onDispose { exoPlayer.release() }
     }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Button(onClick = {
-            if (exoPlayer.isPlaying) {
-                exoPlayer.pause()
-                icon.value = Icons.Default.PlayArrow
-            }else{
-                exoPlayer.play()
-                icon.value = Icons.Default.Pause
-            }
-        }) {
-           Icon(imageVector = icon.value, contentDescription = "Play", tint = Color.Red)
-        }
-    }
+//    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//        Button(onClick = {
+//            if (exoPlayer.isPlaying) {
+//                exoPlayer.pause()
+//                icon.value = Icons.Default.PlayArrow
+//            }else{
+//                exoPlayer.play()
+//                icon.value = Icons.Default.Pause
+//            }
+//        }) {
+//           Icon(imageVector = icon.value, contentDescription = "Play", tint = Color.Red)
+//        }
+//    }
 }
